@@ -28,7 +28,7 @@ public class OAuth2ServerConfig extends ResourceServerConfigurerAdapter {
                 .and()
                 .authorizeRequests()
                 .antMatchers("/resource/**")
-                .access("#oauth2.hasScope('get')");
+                .access("#oauth2.hasScope('read')");
     }
 
 }
