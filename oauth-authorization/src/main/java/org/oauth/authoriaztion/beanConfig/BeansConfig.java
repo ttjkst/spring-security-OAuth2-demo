@@ -1,8 +1,8 @@
 package org.oauth.authoriaztion.beanConfig;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.annotation.*;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
 import org.springframework.security.core.userdetails.User;
@@ -10,6 +10,10 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.provider.ClientDetailsService;
+import org.springframework.security.oauth2.provider.OAuth2RequestFactory;
+import org.springframework.security.oauth2.provider.approval.*;
+import org.springframework.security.oauth2.provider.request.DefaultOAuth2RequestFactory;
 import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.security.oauth2.provider.token.store.redis.RedisTokenStore;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
@@ -18,8 +22,24 @@ import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 @Configuration
 public class BeansConfig {
 
-    @Bean
-    public TokenStore redisTokenStore(@Autowired LettuceConnectionFactory redisConnectionFactory){
+    @Autowired
+    private ApprovalStore approvalStore;
+
+    @Autowired
+    private ClientDetailsService clientDetailsService;
+
+    @Autowired
+    private OAuth2RequestFactory oAuth2RequestFactory;
+
+    @Autowired
+    @Qualifier("tokenStore")
+    private TokenStore tokenStore;
+
+    @Autowired
+    private RedisConnectionFactory redisConnectionFactory;
+
+    @Bean(name = "tokenStore")
+    public TokenStore redisTokenStore(@Autowired RedisConnectionFactory redisConnectionFactory){
         return  new RedisTokenStore(redisConnectionFactory);
     }
 
@@ -35,5 +55,31 @@ public class BeansConfig {
         manager.createUser(users.username("user").password("password").roles("USER").build());
         manager.createUser(users.username("admin").password("password").roles("USER","ADMIN").build());
         return manager;
+    }
+
+    @Bean
+    @Lazy
+    @Scope(proxyMode = ScopedProxyMode.TARGET_CLASS)
+    public UserApprovalHandler userApprovalHandler(){
+        ApprovalStoreUserApprovalHandler userApprovalHandler = new ApprovalStoreUserApprovalHandler();
+        userApprovalHandler.setApprovalStore(approvalStore);
+        userApprovalHandler.setClientDetailsService(clientDetailsService);
+        userApprovalHandler.setRequestFactory(oAuth2RequestFactory);
+        return  userApprovalHandler;
+    }
+
+    @Bean
+    @Lazy
+    public ApprovalStore approvalStore(){
+        TokenApprovalStore store = new TokenApprovalStore();
+        store.setTokenStore(redisTokenStore(redisConnectionFactory));
+        System.out.println("=============================================================");
+        System.out.println(tokenStore);
+        return store;
+    }
+
+    @Bean
+    public OAuth2RequestFactory oAuth2RequestFactory(){
+        return  new DefaultOAuth2RequestFactory(clientDetailsService);
     }
 }

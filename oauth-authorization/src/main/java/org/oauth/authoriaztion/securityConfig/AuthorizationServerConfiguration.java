@@ -13,6 +13,7 @@ import org.springframework.security.oauth2.config.annotation.web.configuration.A
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableAuthorizationServer;
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerEndpointsConfigurer;
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerSecurityConfigurer;
+import org.springframework.security.oauth2.provider.approval.UserApprovalHandler;
 import org.springframework.security.oauth2.provider.token.TokenStore;
 
 
@@ -30,6 +31,9 @@ public class AuthorizationServerConfiguration extends AuthorizationServerConfigu
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+    @Autowired
+    private UserApprovalHandler userApprovalHandler;
+
     @Override
     public void configure(ClientDetailsServiceConfigurer clients) throws Exception {
         clients.inMemory()
@@ -39,13 +43,12 @@ public class AuthorizationServerConfiguration extends AuthorizationServerConfigu
                 .authorities("OAUTH2_CLIENT")
                 .scopes("read","write")
                 .secret("secret")
-                .redirectUris("http://localhost:9093/client/oauth2/resource/get")
-                .autoApprove("read","write");
+                .redirectUris("http://localhost:9093/client/oauth2/resource/get");
     }
 
     @Override
     public void configure(AuthorizationServerEndpointsConfigurer endpoints) throws Exception {
-        endpoints.tokenStore(tokenStore).authenticationManager(authenticationManager);
+        endpoints.tokenStore(tokenStore).authenticationManager(authenticationManager).userApprovalHandler(userApprovalHandler);
     }
 
     @Override
