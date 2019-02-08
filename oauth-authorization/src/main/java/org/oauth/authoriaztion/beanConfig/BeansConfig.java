@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.*;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -13,6 +14,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.provider.ClientDetailsService;
 import org.springframework.security.oauth2.provider.OAuth2RequestFactory;
 import org.springframework.security.oauth2.provider.approval.*;
+import org.springframework.security.oauth2.provider.endpoint.TokenEndpointAuthenticationFilter;
 import org.springframework.security.oauth2.provider.request.DefaultOAuth2RequestFactory;
 import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.security.oauth2.provider.token.store.redis.RedisTokenStore;
@@ -32,13 +34,15 @@ public class BeansConfig {
     private OAuth2RequestFactory oAuth2RequestFactory;
 
     @Autowired
-    @Qualifier("tokenStore")
     private TokenStore tokenStore;
 
     @Autowired
     private RedisConnectionFactory redisConnectionFactory;
 
-    @Bean(name = "tokenStore")
+
+
+
+    @Bean
     public TokenStore redisTokenStore(@Autowired RedisConnectionFactory redisConnectionFactory){
         return  new RedisTokenStore(redisConnectionFactory);
     }
@@ -58,7 +62,6 @@ public class BeansConfig {
     }
 
     @Bean
-    @Lazy
     @Scope(proxyMode = ScopedProxyMode.TARGET_CLASS)
     public UserApprovalHandler userApprovalHandler(){
         ApprovalStoreUserApprovalHandler userApprovalHandler = new ApprovalStoreUserApprovalHandler();
@@ -69,17 +72,16 @@ public class BeansConfig {
     }
 
     @Bean
-    @Lazy
-    public ApprovalStore approvalStore(){
+    public ApprovalStore approvalStoreBean(){
         TokenApprovalStore store = new TokenApprovalStore();
         store.setTokenStore(redisTokenStore(redisConnectionFactory));
-        System.out.println("=============================================================");
-        System.out.println(tokenStore);
         return store;
     }
 
     @Bean
-    public OAuth2RequestFactory oAuth2RequestFactory(){
-        return  new DefaultOAuth2RequestFactory(clientDetailsService);
+    public OAuth2RequestFactory oAuth2RequestFactoryBean(){
+        DefaultOAuth2RequestFactory oAuth2RequestFactory = new DefaultOAuth2RequestFactory(clientDetailsService);
+        oAuth2RequestFactory.setCheckUserScopes(true);
+        return oAuth2RequestFactory;
     }
 }
