@@ -22,16 +22,20 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
 		http.addFilterAfter(getTokenEndpointAuthenticationFilter(), BasicAuthenticationFilter.class)
-				.csrf().requireCsrfProtectionMatcher(new AntPathRequestMatcher("/oauth/**"))
-				.disable().authorizeRequests().antMatchers("/login/**","/")
-				.permitAll()
+					.csrf()
+					.requireCsrfProtectionMatcher(new AntPathRequestMatcher("/oauth/**"))
+					.disable()
+					.authorizeRequests().antMatchers("/login/**","/")
+					.permitAll()
 				.and()
-				.formLogin().loginProcessingUrl("/login/processs").failureUrl("/login/fail")
+					.formLogin()
+					.loginProcessingUrl("/login/processs")
+					.failureUrl("/login/fail")
 				.and()
 				// default protection for all resources (including /oauth/authorize)
-				.authorizeRequests()
-				.anyRequest()
-				.hasAnyRole("ADMIN","USER");
+					.authorizeRequests()
+					.anyRequest()
+					.hasAnyRole("ADMIN","USER");
 		// ... more configuration, e.g. for form login
 	}
 

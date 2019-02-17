@@ -6,7 +6,6 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.support.MessageSourceAccessor;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.authentication.LockedException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.SpringSecurityMessageSource;
@@ -31,7 +30,7 @@ public class ShortCodeAuthenticationProvider implements AuthenticationProvider, 
         ShortCodeAuthenticationToken token = (ShortCodeAuthenticationToken) authentication;
         String uniqueCode       = token.getPrincipal().toString();
         String shortCode        = token.getCredentials().toString();
-        UserDetails userDetails = shortCodeDetailService.loadUserDetailByMac(uniqueCode);
+        UserDetails userDetails = shortCodeDetailService.loadUserDetailByUniqueCode(uniqueCode);
         if(passwordEncoder.matches(shortCode,userDetails.getPassword())) {
             return mapToAuthenication(userDetails);
         }else{

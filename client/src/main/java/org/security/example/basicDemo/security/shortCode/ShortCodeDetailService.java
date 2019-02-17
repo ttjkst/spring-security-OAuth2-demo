@@ -4,5 +4,5 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 public interface ShortCodeDetailService {
 
-    UserDetails loadUserDetailByMac(String uniqueCode);
+    UserDetails loadUserDetailByUniqueCode(String uniqueCode);
 }

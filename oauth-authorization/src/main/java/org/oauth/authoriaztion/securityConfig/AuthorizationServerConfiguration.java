@@ -37,13 +37,22 @@ public class AuthorizationServerConfiguration extends AuthorizationServerConfigu
     @Override
     public void configure(ClientDetailsServiceConfigurer clients) throws Exception {
         clients.inMemory()
-                .withClient("demo-client")
-                .resourceIds("demo-test-resource")
-                .authorizedGrantTypes("authorization_code")
-                .authorities("OAUTH2_CLIENT")
-                .scopes("read","write")
-                .secret("secret")
-                .redirectUris("http://localhost:9093/client/oauth2/resource/get");
+                    .withClient("demo-client")
+                        .resourceIds("demo-test-resource")
+                        .authorizedGrantTypes("authorization_code")
+                        .authorities("OAUTH2_CLIENT")
+                        .scopes("read","write")
+                        .secret("secret")
+                        .redirectUris("http://localhost:9093/client/oauth2/resource/get")
+                .and()
+                    .withClient("my-login-client")
+                    .resourceIds("asasas-1")
+                    .authorizedGrantTypes("authorization_code")
+                    .authorities("OAUTH2_CLIENT")
+                    .scopes("read","userInfo")
+                    .secret("login_secret")
+                    ///至少要配置一个
+                    .redirectUris("http://localhost:9093/client/oauth2/resource/get","http://localhost:9093/client/OAuth/login/process/login_test");
     }
 
     @Override

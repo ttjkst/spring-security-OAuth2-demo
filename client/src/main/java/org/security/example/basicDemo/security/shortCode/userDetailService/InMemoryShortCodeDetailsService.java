@@ -11,7 +11,7 @@ public class InMemoryShortCodeDetailsService implements ShortCodeDetailService {
     private static ConcurrentMap<String,UserDetails>  map = new ConcurrentHashMap(255);
 
     @Override
-    public UserDetails loadUserDetailByMac(String uniqueCode){
+    public UserDetails loadUserDetailByUniqueCode(String uniqueCode){
         return map.get(uniqueCode);
     }
 
