@@ -57,7 +57,7 @@ public class OAuth2ClientConfig {
                 .scope("read","userInfo")
                 .clientSecret("login_secret")
                 .authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE)
-                .redirectUriTemplate("{baseUrl}/OAuth/login/process/login_test")
+                .redirectUriTemplate("{baseUrl}/login/oauth2/code/login_test")
                 .authorizationUri(userAuthorizationUri)
                 .tokenUri(accessTokenUri)
                 .userInfoUri(userInfo)

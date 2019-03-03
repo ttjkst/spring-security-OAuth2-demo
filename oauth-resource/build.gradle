@@ -33,6 +33,8 @@ dependencies {
     implementation('org.springframework.boot:spring-boot-starter-web')
     compile group: 'org.springframework.security.oauth.boot', name: 'spring-security-oauth2-autoconfigure', version: '2.1.2.RELEASE'
     runtimeOnly('org.springframework.boot:spring-boot-devtools')
+    implementation('org.springframework.security:spring-security-oauth2-resource-server')
+    implementation('org.springframework.security:spring-security-oauth2-jose')
     testImplementation('org.springframework.boot:spring-boot-starter-test')
     testImplementation('org.springframework.security:spring-security-test')
 }
