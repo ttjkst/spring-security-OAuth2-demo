@@ -34,6 +34,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 				.and()
 				// default protection for all resources (including /oauth/authorize)
 					.authorizeRequests()
+				    .mvcMatchers("/.well-known/jwks.json")
+				    .permitAll()
 					.anyRequest()
 					.hasAnyRole("ADMIN","USER");
 		// ... more configuration, e.g. for form login

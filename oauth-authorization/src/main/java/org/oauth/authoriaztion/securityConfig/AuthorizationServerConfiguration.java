@@ -157,6 +157,7 @@ public class AuthorizationServerConfiguration extends AuthorizationServerConfigu
 
     @FrameworkEndpoint
     class JwkSetEndpoint {
+        @Autowired
         KeyPair keyPair;
 
         public JwkSetEndpoint(KeyPair keyPair) {
