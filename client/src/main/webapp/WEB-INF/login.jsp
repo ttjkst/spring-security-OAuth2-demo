@@ -14,5 +14,12 @@
             <input type="password" name="password"/>
             <button type="submit">提交</button>
         </form>
+
+         <form action="${ctx}/shortCode/process" method="post">
+                    <input type="hidden" name="_unique_code" value="test_1"/>
+                    <label>短码登入</label>
+                    <input type="password" name="_short_code"/>
+                    <button type="submit">提交</button>
+          </form>
 </body>
 </html>
