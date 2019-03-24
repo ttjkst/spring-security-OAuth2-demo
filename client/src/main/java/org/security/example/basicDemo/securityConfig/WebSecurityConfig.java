@@ -84,7 +84,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 						.and()
 							.userInfoEndpoint()
 								.oidcUserService(this.oidcUserService())
-				        .and()
+				        .and().defaultSuccessUrl("/login/end/success")
 				.and()
 					.oauth2Client()
 					.authorizedClientService(oAuth2AuthorizedClientService)

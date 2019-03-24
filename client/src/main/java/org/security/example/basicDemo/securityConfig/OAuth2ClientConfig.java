@@ -59,6 +59,7 @@ public class OAuth2ClientConfig {
                 .authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE)
                 .redirectUriTemplate("{baseUrl}/login/oauth2/code/login_test")
                 .authorizationUri(userAuthorizationUri)
+                .userNameAttributeName("aa")
                 .tokenUri(accessTokenUri)
                 .userInfoUri(userInfo)
                 .build();

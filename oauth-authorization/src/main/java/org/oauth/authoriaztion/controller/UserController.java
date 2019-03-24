@@ -7,6 +7,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.HashMap;
+import java.util.Map;
+
 @RestController
 @RequestMapping("/user/")
 public class UserController {
@@ -14,8 +17,10 @@ public class UserController {
 
     @RequestMapping(value = "/info",method = {RequestMethod.GET,RequestMethod.POST})
     @ResponseBody
-    @PreAuthorize("#oauth2.hasScope('userInfo')")
     public Object userInfo(){
-        return SecurityContextHolder.getContext().getAuthentication();
+        String userAtt ="aa";
+        Map<String,Object> map = new HashMap<>(1);
+        map.put(userAtt,SecurityContextHolder.getContext().getAuthentication());
+        return map;
     }
 }
