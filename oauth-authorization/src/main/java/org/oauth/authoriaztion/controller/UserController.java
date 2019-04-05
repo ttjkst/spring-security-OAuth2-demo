@@ -1,5 +1,6 @@
 package org.oauth.authoriaztion.controller;
 
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,6 +18,7 @@ public class UserController {
 
     @RequestMapping(value = "/info",method = {RequestMethod.GET,RequestMethod.POST})
     @ResponseBody
+    //@PreAuthorize("hasAuthorty('SCOPE_userInfo')")
     public Object userInfo(){
         String userAtt ="aa";
         Map<String,Object> map = new HashMap<>(1);
