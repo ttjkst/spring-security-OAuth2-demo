@@ -1,5 +1,7 @@
 package org.oauth.authoriaztion.authority;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 /**
  * 分装的权限关系的类型,在
  * @see org.oauth.authoriaztion.authority.AuthorityResource
@@ -32,7 +34,7 @@ public class AuthorityEntity {
     }
 
     public Boolean getAny() {
-        return any;
+        return any==null?false:any;
     }
 
     public void setAny(Boolean any) {

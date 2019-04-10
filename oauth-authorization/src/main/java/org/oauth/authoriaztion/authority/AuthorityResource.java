@@ -10,7 +10,11 @@ import com.fasterxml.jackson.databind.util.JSONPObject;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.expression.EvaluationContext;
+import org.springframework.expression.spel.support.StandardEvaluationContext;
 import org.springframework.security.access.ConfigAttribute;
+import org.springframework.security.authentication.AuthenticationTrustResolver;
+import org.springframework.security.authentication.AuthenticationTrustResolverImpl;
 import org.springframework.security.web.FilterInvocation;
 import org.springframework.security.web.access.intercept.FilterInvocationSecurityMetadataSource;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
@@ -32,6 +36,9 @@ public class AuthorityResource implements FilterInvocationSecurityMetadataSource
 
     private LinkedList<AuthorityAttr> authorityAttrs;
 
+
+    private final String premitAll="permitAll()";
+
     public AuthorityResource() throws IOException {
 
         JavaType javaType = objectMapper.getTypeFactory().constructCollectionLikeType(List.class,AuthorityEntity.class);
@@ -47,7 +54,12 @@ public class AuthorityResource implements FilterInvocationSecurityMetadataSource
             AntPathRequestMatcher antPath = new AntPathRequestMatcher(entity.getPath(),null,
                     false,
                     null);
-            AuthorityAttr attr = new AuthorityAttr(entity.getAuthority(),antPath);
+            AuthorityAttr attr;
+            if(entity.getAny()){
+                attr = new AuthorityAttr(premitAll, antPath, true);
+            }else {
+                attr = new AuthorityAttr(entity.getAuthority(), antPath, false);
+            }
             linkedList.add(attr);
         });
         return linkedList;
