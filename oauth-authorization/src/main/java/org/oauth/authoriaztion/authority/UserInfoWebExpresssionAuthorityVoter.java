@@ -52,6 +52,7 @@ public class UserInfoWebExpresssionAuthorityVoter implements AccessDecisionVoter
             return ACCESS_DENIED;
         }else{
             //弃权
+            logger.info("org.oauth.authoriaztion.authority.UserInfoWebExpresssionAuthorityVoter is ACCESS_ABSTAIN ");
             return  ACCESS_ABSTAIN;
         }
     }

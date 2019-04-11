@@ -1,5 +1,6 @@
 package org.oauth.authoriaztion.beanConfig;
 
+import org.oauth.authoriaztion.user.UserInfoDetailService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.*;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
@@ -11,6 +12,7 @@ import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.security.oauth2.provider.token.store.redis.RedisTokenStore;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 
+import java.io.IOException;
 
 
 @Configuration
@@ -27,11 +29,7 @@ public class BeansConfig {
     }
 
     @Bean
-    public UserDetailsService userDetailsService(){
-        User.UserBuilder users = User.withDefaultPasswordEncoder();
-        InMemoryUserDetailsManager manager = new InMemoryUserDetailsManager();
-        manager.createUser(users.username("user").password("password").roles("USER").build());
-        manager.createUser(users.username("admin").password("password").roles("USER","ADMIN").build());
-        return manager;
+    public UserDetailsService userDetailsService() throws IOException {
+        return  new UserInfoDetailService();
     }
 }

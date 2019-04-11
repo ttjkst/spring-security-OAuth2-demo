@@ -1,5 +1,19 @@
 [
-    {"username":"admin","password":"admin",authorities:[
-    ]},
-
+    {
+        "username": "admin",
+        "password": "admin",
+        "authorities": [
+            "ROLE_ADMIN",
+            "ROLE_USER"
+        ],
+        "accountNonExpired": false,
+        "accountNonLocked": false,
+        "credentialsNonExpired": false,
+        "enabled": true,
+        "authorityEntities":[
+            {"path":"/.well-known/jwks.json","authority":"","any":true},
+            {"path":"/user/info","authority":"SCOPE_userInfo"},
+            {"path":"/*","authority":"ROLE_ANONYMOUS"}
+        ]
+    }
 ]

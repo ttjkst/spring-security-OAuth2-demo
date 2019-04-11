@@ -10,6 +10,7 @@ import com.fasterxml.jackson.databind.util.JSONPObject;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.expression.EvaluationContext;
 import org.springframework.expression.spel.support.StandardEvaluationContext;
 import org.springframework.security.access.ConfigAttribute;
@@ -40,11 +41,9 @@ public class AuthorityResource implements FilterInvocationSecurityMetadataSource
     private final String premitAll="permitAll()";
 
     public AuthorityResource() throws IOException {
-
+        ClassPathResource fileRource = new ClassPathResource( "dataAuthorityJSON.json" );
         JavaType javaType = objectMapper.getTypeFactory().constructCollectionLikeType(List.class,AuthorityEntity.class);
-        Collection<AuthorityEntity> authorityEntities = (Collection<AuthorityEntity>) objectMapper.readValue(new File(
-                "D:\\javaWorkplace\\spring-security-OAuth2-demo\\oauth-authorization\\src\\main\\java\\org\\" +
-                        "oauth\\authoriaztion\\authority\\dataAuthorityJSON.json"), javaType);
+        Collection<AuthorityEntity> authorityEntities = (Collection<AuthorityEntity>) objectMapper.readValue(fileRource.getFile()  , javaType);
         authorityAttrs = mapToAuthorityAttrs(authorityEntities);
     }
 

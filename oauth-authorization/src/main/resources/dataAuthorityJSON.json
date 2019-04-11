@@ -2,5 +2,4 @@
   {"path":"/.well-known/jwks.json","authority":"","any":true},
   {"path":"/user/info","authority":"SCOPE_userInfo"},
   {"path":"/*","authority":"ROLE_ANONYMOUS"}
-
 ]

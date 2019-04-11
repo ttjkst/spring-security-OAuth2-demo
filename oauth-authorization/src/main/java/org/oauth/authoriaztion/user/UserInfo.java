@@ -1,7 +1,9 @@
 package org.oauth.authoriaztion.user;
 
+import org.oauth.authoriaztion.authority.AuthorityAttr;
 import org.oauth.authoriaztion.authority.AuthorityEntity;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
@@ -12,7 +14,7 @@ public class UserInfo implements UserDetails {
 
     private String password;
     private final String username;
-    private final Set<GrantedAuthority> authorities;
+    private final Set<? extends GrantedAuthority> authorities;
 
 
     private final LinkedHashMap<AntPathRequestMatcher,AuthorityEntity> belongToRequestMap;
@@ -22,9 +24,9 @@ public class UserInfo implements UserDetails {
     private final boolean credentialsNonExpired;
     private final boolean enabled;
 
-    public UserInfo(String password, String username, Set<GrantedAuthority> authorities,
+    public UserInfo(String password, String username, Set<? extends GrantedAuthority> authorities,
                     boolean accountNonExpired, boolean accountNonLocked,
-                    boolean credentialsNonExpired, boolean enabled,List<AuthorityEntity> authorityInfos) {
+                    boolean credentialsNonExpired, boolean enabled,Set<AuthorityEntity> authorityInfos) {
 
         if (((username == null) || "".equals(username)) || (password == null)) {
             throw new IllegalArgumentException(
@@ -52,15 +54,15 @@ public class UserInfo implements UserDetails {
                 null);
     }
 
-    public UserInfo(String password, String username, Set<GrantedAuthority> authorities,
+    public UserInfo(String password, String username, Set<? extends GrantedAuthority> authorities,
                     boolean accountNonExpired, boolean accountNonLocked,
-                    boolean credentialsNonExpired,List<AuthorityEntity> authorityInfos) {
+                    boolean credentialsNonExpired,Set<AuthorityEntity> authorityInfos) {
 
         this(password,username,authorities,accountNonExpired,accountNonLocked,credentialsNonExpired,true, authorityInfos);
     }
 
 
-    public UserInfo(String password, String username, Set<GrantedAuthority> authorities,List<AuthorityEntity> authorityInfos) {
+    public UserInfo(String password, String username, Set<? extends GrantedAuthority> authorities, Set<AuthorityEntity> authorityInfos) {
 
         this(password,username,authorities,true,true,
                 true,true, authorityInfos);
