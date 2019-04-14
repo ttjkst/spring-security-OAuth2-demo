@@ -1,14 +1,11 @@
 package org.oauth.authoriaztion.user;
 
-import org.oauth.authoriaztion.authority.AuthorityAttr;
 import org.oauth.authoriaztion.authority.AuthorityEntity;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class UserInfo implements UserDetails {
 
