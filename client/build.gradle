@@ -25,11 +25,11 @@ sourceCompatibility = 1.8
 repositories {
 	mavenCentral()
 	mavenLocal()
+	maven{ url 'http://maven.aliyun.com/nexus/content/groups/public/'}
 }
 
 
 dependencies {
-	implementation('org.springframework.boot:spring-boot-starter-security')
 	implementation('org.springframework.boot:spring-boot-starter-web')
 	compile group: 'org.springframework.security.oauth.boot', name: 'spring-security-oauth2-autoconfigure', version: '2.1.2.RELEASE'
 	compile group: 'org.springframework.session', name: 'spring-session-core', version: '2.1.2.RELEASE'
@@ -39,4 +39,5 @@ dependencies {
     compile group: 'org.apache.tomcat.embed', name: 'tomcat-embed-jasper', version: '8.5.32'
     compile group: 'org.apache.tomcat', name: 'tomcat-jsp-api', version: '8.5.32'
     compile group: 'ch.qos.logback', name: 'logback-classic', version: '1.2.3'
+	implementation('org.github.securityDemo:securityDemo-core:0.0.1')
 }

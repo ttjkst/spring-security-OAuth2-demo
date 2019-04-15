@@ -8,6 +8,8 @@ import java.util.Map;
 import java.util.Set;
 
 
+import org.github.securityDemo.core.user.UserInfoEnity;
+import org.github.securityDemo.core.utils.AuthorityUtils;
 import org.security.example.basicDemo.security.shortCode.ShortCodeAuthenicationFilter;
 import org.security.example.basicDemo.security.shortCode.ShortCodeAuthenticationProvider;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,9 +50,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
 	@Autowired
 	private OAuth2AuthorizedClientService oAuth2AuthorizedClientService;
-
-	@Value("${userDetailUrl}")
-	private String USER_DETAIL_URL;
 
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
@@ -115,12 +114,15 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
             headers.setBearerAuth(userRequest.getAccessToken().getTokenValue());
             headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
 			try {
-                URI uri = UriComponentsBuilder.fromUriString(USER_DETAIL_URL+"?name="+userRequest)
+                URI uri = UriComponentsBuilder.fromUriString(userRequest.getClientRegistration()
+						.getProviderDetails().getUserInfoEndpoint().getUri())
                         .build()
                         .toUri();
-                RequestEntity<?> requestEntity = new RequestEntity<>(headers, HttpMethod.GET, url);
-                ResponseEntity<Map> exchange = restTemplate.exchange(requestEntity, Map.class);
-                oidcUser = new DefaultOidcUser(mappedAuthorities, oidcUser.getIdToken(), oidcUser.getUserInfo());
+                RequestEntity<?> requestEntity = new RequestEntity<>(headers, HttpMethod.GET, uri);
+                ResponseEntity<UserInfoEnity> exchange = restTemplate.exchange(requestEntity, UserInfoEnity.class);
+				UserInfoEnity userInfoEnity = exchange.getBody();
+				oidcUser = new DefaultOidcUser(AuthorityUtils.packGrantedAuthoritys(userInfoEnity.getAuthorities()),
+						userRequest.getIdToken(), oidcUser.getUserInfo());
             }catch (Exception e){
 
             }
