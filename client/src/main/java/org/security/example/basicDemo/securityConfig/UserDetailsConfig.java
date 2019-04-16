@@ -17,7 +17,7 @@ public class UserDetailsConfig implements  WebMvcConfigurer{
 	public PasswordEncoder passwordEncoder(){
 		return PasswordEncoderFactories.createDelegatingPasswordEncoder();
 	}
--
+
 	@Bean
 	public ShortCodeDetailService shortCodeDetailService() {
 		InMemoryShortCodeDetailsService inMemoryShortCodeDetailsService = new InMemoryShortCodeDetailsService();
