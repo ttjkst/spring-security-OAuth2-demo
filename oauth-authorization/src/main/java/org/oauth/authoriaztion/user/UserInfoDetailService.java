@@ -9,6 +9,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.util.StringUtils;
 
@@ -20,11 +21,12 @@ import java.util.stream.Collectors;
 public class UserInfoDetailService implements UserDetailsService {
 
 
-    private List<UserInfo> userInfos;
+    private static List<UserInfo> userInfos;
 
     private String path ="userInfos.json";
 
     private final String premitAll="permitAll()";
+
 
     private ObjectMapper objectMapper = new ObjectMapper();
 
@@ -54,7 +56,9 @@ public class UserInfoDetailService implements UserDetailsService {
                 .stream()
                 .map( SimpleGrantedAuthority::new )
                 .collect( Collectors.toSet());
-        return new UserInfo(enity.getUsername(),enity.getPassword(),simpleGrantedAuthorities,entities);
+        //due to spring default password encoder will be configured,use default password encoder --bcrypt
+        String encodePassword = PasswordEncoderFactories.createDelegatingPasswordEncoder().encode(enity.getPassword());
+        return new UserInfo(enity.getUsername(),encodePassword,simpleGrantedAuthorities,entities);
     }
 
     private LinkedList<AuthorityAttr> mapToAuthorityAttrs(Collection<AuthorityEntity> authorityEntities){

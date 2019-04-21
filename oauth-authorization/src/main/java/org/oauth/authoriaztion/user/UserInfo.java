@@ -9,8 +9,9 @@ import java.util.*;
 
 public class UserInfo implements UserDetails {
 
-    private String password;
+
     private final String username;
+    private  String password;
     private final Set<? extends GrantedAuthority> authorities;
 
 
@@ -21,7 +22,7 @@ public class UserInfo implements UserDetails {
     private final boolean credentialsNonExpired;
     private final boolean enabled;
 
-    public UserInfo(String password, String username, Set<? extends GrantedAuthority> authorities,
+    public UserInfo( String username,String password, Set<? extends GrantedAuthority> authorities,
                     boolean accountNonExpired, boolean accountNonLocked,
                     boolean credentialsNonExpired, boolean enabled,Set<AuthorityEntity> authorityInfos) {
 
@@ -51,17 +52,17 @@ public class UserInfo implements UserDetails {
                 null);
     }
 
-    public UserInfo(String password, String username, Set<? extends GrantedAuthority> authorities,
+    public UserInfo( String username,String password, Set<? extends GrantedAuthority> authorities,
                     boolean accountNonExpired, boolean accountNonLocked,
                     boolean credentialsNonExpired,Set<AuthorityEntity> authorityInfos) {
 
-        this(password,username,authorities,accountNonExpired,accountNonLocked,credentialsNonExpired,true, authorityInfos);
+        this(username,password,authorities,accountNonExpired,accountNonLocked,credentialsNonExpired,true, authorityInfos);
     }
 
 
-    public UserInfo(String password, String username, Set<? extends GrantedAuthority> authorities, Set<AuthorityEntity> authorityInfos) {
+    public UserInfo( String username,String password, Set<? extends GrantedAuthority> authorities, Set<AuthorityEntity> authorityInfos) {
 
-        this(password,username,authorities,true,true,
+        this(username,password,authorities,true,true,
                 true,true, authorityInfos);
     }
 

@@ -79,7 +79,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 						.and()
 							.userInfoEndpoint()
 								.oidcUserService(this.oidcUserService())
-				        .and().defaultSuccessUrl("/login/end/success")
+				        .and()
+							.defaultSuccessUrl("/login/end/success")
 				.and()
 					.oauth2Client()
 					.authorizedClientService(oAuth2AuthorizedClientService)
@@ -109,23 +110,26 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 			// Delegate to the default implementation for loading a user
 			OidcUser oidcUser = delegate.loadUser(userRequest);
 			Set<GrantedAuthority> mappedAuthorities = new HashSet<>();
-			RestTemplate restTemplate = new RestTemplate();
-			HttpHeaders headers = new HttpHeaders();
-            headers.setBearerAuth(userRequest.getAccessToken().getTokenValue());
-            headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
-			try {
-                URI uri = UriComponentsBuilder.fromUriString(userRequest.getClientRegistration()
-						.getProviderDetails().getUserInfoEndpoint().getUri())
-                        .build()
-                        .toUri();
-                RequestEntity<?> requestEntity = new RequestEntity<>(headers, HttpMethod.GET, uri);
-                ResponseEntity<UserInfoEnity> exchange = restTemplate.exchange(requestEntity, UserInfoEnity.class);
-				UserInfoEnity userInfoEnity = exchange.getBody();
-				oidcUser = new DefaultOidcUser(AuthorityUtils.packGrantedAuthoritys(userInfoEnity.getAuthorities()),
-						userRequest.getIdToken(), oidcUser.getUserInfo());
-            }catch (Exception e){
+//			RestTemplate restTemplate = new RestTemplate();
+//			HttpHeaders headers = new HttpHeaders();
+//            headers.setBearerAuth(userRequest.getAccessToken().getTokenValue());
+//            headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
+//			try {
+//                URI uri = UriComponentsBuilder.fromUriString(userRequest.getClientRegistration()
+//						.getProviderDetails().getUserInfoEndpoint().getUri())
+//                        .build()
+//                        .toUri();
+//                RequestEntity<?> requestEntity = new RequestEntity<>(headers, HttpMethod.GET, uri);
+//                ResponseEntity<UserInfoEnity> exchange = restTemplate.exchange(requestEntity, UserInfoEnity.class);
+//				UserInfoEnity userInfoEnity = exchange.getBody();
+//				oidcUser = new DefaultOidcUser(AuthorityUtils.packGrantedAuthoritys(userInfoEnity.getAuthorities()),
+//						userRequest.getIdToken(), oidcUser.getUserInfo());
+//            }catch (Exception e){
+//
+//            }
+			oidcUser = new DefaultOidcUser(mappedAuthorities,
+					userRequest.getIdToken(), oidcUser.getUserInfo());
 
-            }
 			return oidcUser;
 		};
 	}

@@ -8,5 +8,5 @@
  */
 
 rootProject.name = 'spring-security-OAuth2-demo'
-include('securityDemo-core','resource','client')
+include('securityDemo-core','resource','client','openID-connect-core-server-support')
 

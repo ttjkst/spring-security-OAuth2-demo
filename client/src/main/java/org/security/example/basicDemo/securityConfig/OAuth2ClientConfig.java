@@ -54,7 +54,7 @@ public class OAuth2ClientConfig {
     public ClientRegistrationRepository getClientRegistrationRepository(){
         ClientRegistration  clientRegistration = ClientRegistration.withRegistrationId("login_test")
                 .clientId("my-login-client")
-                .scope("read","user")
+                .scope("read","user","openId")
                 .clientSecret("login_secret")
                 .authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE)
                 .redirectUriTemplate("{baseUrl}/login/oauth2/code/login_test")

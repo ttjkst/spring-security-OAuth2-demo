@@ -24,6 +24,8 @@ sourceCompatibility = 1.8
 
 
 repositories {
+    maven{ url 'http://maven.aliyun.com/nexus/content/groups/public/'}
+    mavenLocal()
     mavenCentral()
 }
 
@@ -38,5 +40,6 @@ dependencies {
     testImplementation('org.springframework.boot:spring-boot-starter-test')
     implementation('org.springframework.security:spring-security-oauth2-resource-server')
     compile group: 'com.nimbusds', name: 'nimbus-jose-jwt', version: '7.0.1'
+    implementation('org.github.securityDemo:openID-connect-core-server-support:0.0.1')
     implementation('org.springframework.security:spring-security-oauth2-jose')
 }

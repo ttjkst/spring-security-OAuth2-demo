@@ -4,6 +4,7 @@ import com.nimbusds.jose.jwk.JWKSet;
 import com.nimbusds.jose.jwk.RSAKey;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.github.ttjkst.openID.connect.token.OpenIdConnectTokenEnhancer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
@@ -12,7 +13,6 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.BeanIds;
-import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.config.annotation.configurers.ClientDetailsServiceConfigurer;
@@ -28,8 +28,7 @@ import org.springframework.security.oauth2.provider.approval.TokenApprovalStore;
 import org.springframework.security.oauth2.provider.approval.UserApprovalHandler;
 import org.springframework.security.oauth2.provider.endpoint.FrameworkEndpoint;
 import org.springframework.security.oauth2.provider.request.DefaultOAuth2RequestFactory;
-import org.springframework.security.oauth2.provider.token.DefaultAccessTokenConverter;
-import org.springframework.security.oauth2.provider.token.TokenStore;
+import org.springframework.security.oauth2.provider.token.*;
 import org.springframework.security.oauth2.provider.token.store.JwtAccessTokenConverter;
 import org.springframework.security.oauth2.provider.token.store.JwtTokenStore;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -37,6 +36,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.security.*;
 import java.security.interfaces.RSAPublicKey;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.Map;
 
@@ -68,6 +68,12 @@ public class AuthorizationServerConfiguration extends AuthorizationServerConfigu
     @Autowired
     private OAuth2RequestFactory oAuth2RequestFactory;
 
+    @Autowired
+    private  KeyPair keyPair;
+
+    @Autowired
+    private JwtAccessTokenConverter accessTokenConverter;
+
     @Override
     public void configure(ClientDetailsServiceConfigurer clients) throws Exception {
         clients.inMemory()
@@ -83,18 +89,25 @@ public class AuthorizationServerConfiguration extends AuthorizationServerConfigu
                     .resourceIds("asasas-1")
                     .authorizedGrantTypes("authorization_code")
                     .authorities("OAUTH2_CLIENT")
-                    .scopes("read","user")
+                    .scopes("read","user","openId")
                     .secret("login_secret")
                     ///至少要配置一个
-                    .redirectUris("http://localhost:9093/client/oauth2/resource/get","http://localhost:9093/client/login/oauth2/code/login_test");
+                    .redirectUris("http://localhost:9093/client/oauth2/resource/get",
+                            "http://localhost:9093/client/login/oauth2/code/login_test");
     }
 
     @Override
     public void configure(AuthorizationServerEndpointsConfigurer endpoints) throws Exception {
+        OpenIdConnectTokenEnhancer tokenEnhancer = new OpenIdConnectTokenEnhancer();
+        tokenEnhancer.setKeyPair(keyPair);
         endpoints.tokenStore(getTokenStore())
                 .authenticationManager(authenticationManager)
                 .userApprovalHandler(userApprovalHandler)
-                .accessTokenConverter(accessTokenConverter());
+                .accessTokenConverter(accessTokenConverter);
+        TokenEnhancerChain tokenEnhancerChain = new TokenEnhancerChain();
+        tokenEnhancerChain.setTokenEnhancers(Arrays.asList(tokenEnhancer,accessTokenConverter));
+        endpoints.tokenEnhancer(tokenEnhancerChain);
+
     }
 
     @Override
@@ -102,28 +115,6 @@ public class AuthorizationServerConfiguration extends AuthorizationServerConfigu
         security.passwordEncoder(NoOpPasswordEncoder.getInstance());
     }
 
-    @Bean
-    public  KeyPair  keyPair() throws NoSuchAlgorithmException {
-        KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance("RSA");
-
-        SecureRandom secureRandom = new SecureRandom(new Date().toString().getBytes());
-        keyPairGenerator .initialize(1024, secureRandom);
-        KeyPair keyPair = keyPairGenerator.genKeyPair();
-
-        keyPair.getPublic().toString();
-        logger.info("publickey:"+keyPair.getPublic().getEncoded());
-        return  keyPair;
-    }
-
-
-    @Bean
-    public JwtAccessTokenConverter accessTokenConverter() throws NoSuchAlgorithmException {
-        JwtAccessTokenConverter converter = new JwtAccessTokenConverter();
-        converter.setKeyPair(keyPair());
-        DefaultAccessTokenConverter accessTokenConverter = new DefaultAccessTokenConverter();
-        converter.setAccessTokenConverter(accessTokenConverter);
-        return converter;
-    }
 
     @Bean
     @Scope(proxyMode = ScopedProxyMode.TARGET_CLASS)
@@ -151,7 +142,7 @@ public class AuthorizationServerConfiguration extends AuthorizationServerConfigu
 
     @Bean
     public TokenStore getTokenStore() throws NoSuchAlgorithmException {
-        return new JwtTokenStore(accessTokenConverter());
+        return new JwtTokenStore(accessTokenConverter);
     }
 
 

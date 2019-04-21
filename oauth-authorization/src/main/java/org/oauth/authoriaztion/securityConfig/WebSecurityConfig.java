@@ -42,19 +42,21 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 					.csrf()
 					.requireCsrfProtectionMatcher(new AntPathRequestMatcher("/oauth/**"))
 					.disable()
-					.authorizeRequests().antMatchers("/login/**","/")
+					.authorizeRequests()
+				    .antMatchers("/login/**","/")
 					.permitAll()
 					.withObjectPostProcessor(new FilterSecurityInterceptorObjectPostProcessor())
 				.and()
 					.formLogin()
-					.loginProcessingUrl("/login/processs")
-					.failureUrl("/login/fail")
+				    	//.loginPage("/login")
+						.loginProcessingUrl("/login/processs")
+						.failureUrl("/login/fail")
+				    	.permitAll()
 				.and()
 					.oauth2ResourceServer()
 					.jwt()
-					.decoder(jwtDecoder());
-//					.and()
-//				.and()
+					.decoder(jwtDecoder())
+				.and();
 ////				// default protection for all resources (including /oauth/authorize)
 //					.authorizeRequests()
 //				    	.mvcMatchers("/.well-known/jwks.json").
@@ -71,10 +73,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 		return new NimbusJwtDecoderJwkSupport("http://127.0.0.1:9091/authorizan/.well-known/jwks.json");
 	}
 
-	@Override
-	public void configure(WebSecurity web) throws Exception {
-		//web.objectPostProcessor(new FilterSecurityInterceptorObjectPostProcessor());
-	}
 
 
 	@Override
@@ -98,11 +96,11 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 				logger.info("reset securityMetadataSource find it");
 				FilterSecurityInterceptor securityInterceptor = (FilterSecurityInterceptor) object;
 
-                try {
-                    securityInterceptor.setSecurityMetadataSource(new AuthorityResource());
-                } catch (IOException e) {
-                    throw new RuntimeException("init AuthorityResource fail",e);
-                }
+//                try {
+//                    securityInterceptor.setSecurityMetadataSource(new AuthorityResource());
+//                } catch (IOException e) {
+//                    throw new RuntimeException("init AuthorityResource fail",e);
+//                }
                 AccessDecisionManager accessDecisionManager = securityInterceptor.getAccessDecisionManager();
                 if(accessDecisionManager instanceof AbstractAccessDecisionManager){
                     ((AbstractAccessDecisionManager) accessDecisionManager).getDecisionVoters().add(new WebExpressionAutorityVoter());
@@ -136,7 +134,10 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
 
 
-		private TokenEndpointAuthenticationFilter getTokenEndpointAuthenticationFilter() throws Exception {
+	/**
+	 * 用于将用户的角色映射的到scope 中
+	 * */
+	private TokenEndpointAuthenticationFilter getTokenEndpointAuthenticationFilter() throws Exception {
 		TokenEndpointAuthenticationFilter tokenEndpointAuthenticationFilter  = new TokenEndpointAuthenticationFilter(this.authenticationManager(),oAuth2RequestFactory);
 		return tokenEndpointAuthenticationFilter;
 	}
