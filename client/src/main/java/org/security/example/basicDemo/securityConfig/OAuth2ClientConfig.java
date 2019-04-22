@@ -54,7 +54,7 @@ public class OAuth2ClientConfig {
     public ClientRegistrationRepository getClientRegistrationRepository(){
         ClientRegistration  clientRegistration = ClientRegistration.withRegistrationId("login_test")
                 .clientId("my-login-client")
-                .scope("read","user","openId")
+                .scope("read","user","openid")
                 .clientSecret("login_secret")
                 .authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE)
                 .redirectUriTemplate("{baseUrl}/login/oauth2/code/login_test")
@@ -62,6 +62,7 @@ public class OAuth2ClientConfig {
                 .userNameAttributeName("aa")
                 .tokenUri(accessTokenUri)
                 .userInfoUri(userInfo)
+                .jwkSetUri("http://127.0.0.1:9091/authorizan/.well-known/jwks.json")
                 .build();
         InMemoryClientRegistrationRepository inMemory = new InMemoryClientRegistrationRepository(clientRegistration);
         return inMemory;

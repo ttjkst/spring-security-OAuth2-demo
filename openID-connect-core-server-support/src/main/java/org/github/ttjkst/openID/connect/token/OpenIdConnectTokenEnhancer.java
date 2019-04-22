@@ -32,7 +32,9 @@ public class OpenIdConnectTokenEnhancer implements TokenEnhancer {
      * openId,
      * required,this String must include in request
      * */
-    private final static String OPEN_ID="openId";
+    private final static String OPEN_ID="openid";
+
+    private final static String ID_TOKEN="id_token";
 
     /**
      * Issuer Identifier,
@@ -155,7 +157,7 @@ public class OpenIdConnectTokenEnhancer implements TokenEnhancer {
         if(containsOpenId(oAuth2AccessToken)){
             DefaultOAuth2AccessToken enhanceAccessToken = new DefaultOAuth2AccessToken(oAuth2AccessToken);
             Map<String, Object> idTokenMap = new LinkedHashMap<>(10);
-            idTokenMap.put(ISS,"ttest");
+            idTokenMap.put(ISS,"https://www.example.com/openId-connect");
             idTokenMap.put(SUB,oAuth2AccessToken.getValue());
             idTokenMap.put(AUD,oAuth2Authentication.getOAuth2Request().getClientId());
             idTokenMap.put(EXP,oAuth2AccessToken.getExpiration().getTime());
@@ -166,7 +168,7 @@ public class OpenIdConnectTokenEnhancer implements TokenEnhancer {
             String content = objectMapper.formatMap(idTokenMap);
             String idToken = JwtHelper.encode(content, this.signer).getEncoded();
             Map<String, Object> additionalInformation = new LinkedHashMap<>(enhanceAccessToken.getAdditionalInformation());
-            additionalInformation.put("idToken",idToken);
+            additionalInformation.put(ID_TOKEN,idToken);
             enhanceAccessToken.setAdditionalInformation(additionalInformation);
             return enhanceAccessToken;
         }

@@ -2,6 +2,7 @@ package org.oauth.authoriaztion.beanConfig;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.oauth.authoriaztion.keyPair.KeyPairUtils;
 import org.oauth.authoriaztion.user.UserInfoDetailService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.*;
@@ -55,15 +56,8 @@ public class BeansConfig {
     }
 
     @Bean
-    public KeyPair generateKeyPair() throws NoSuchAlgorithmException {
-        KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance("RSA");
-
-        SecureRandom secureRandom = new SecureRandom(new Date().toString().getBytes());
-        keyPairGenerator .initialize(1024, secureRandom);
-        KeyPair keyPair = keyPairGenerator.genKeyPair();
-        keyPair.getPublic().toString();
-        logger.info("publickey:"+keyPair.getPublic().getEncoded());
-        return  keyPair;
+    public  KeyPair  generateKeyPair() throws NoSuchAlgorithmException {
+      return KeyPairUtils.getKey();
     }
 
 
