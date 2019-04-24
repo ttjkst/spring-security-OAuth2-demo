@@ -1,7 +1,12 @@
 package org.github.ttjkst.openID.connect.token;
 
+import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.JWSAlgorithm;
 import com.nimbusds.jose.JWSHeader;
+import com.nimbusds.jose.JWSSigner;
+import com.nimbusds.jose.crypto.RSASSASigner;
+import com.nimbusds.jose.jwk.RSAKey;
+import com.nimbusds.jose.jwk.gen.RSAKeyGenerator;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
 import org.springframework.security.core.GrantedAuthority;
@@ -103,44 +108,15 @@ public class OpenIdConnectTokenEnhancer implements TokenEnhancer {
 
     private static AtomicInteger INTIAL_SUB = new AtomicInteger(1);
 
-    private String verifierKey = (new RandomValueStringGenerator()).generate();
 
-    private JsonParser objectMapper = JsonParserFactory.create();
 
-    private Signer signer;
 
-    private String signingKey;
 
-    private SignatureVerifier verifier;
+    private KeyPair keyPair;
 
-    public OpenIdConnectTokenEnhancer() {
-        this.signer = new MacSigner(this.verifierKey);
-        this.signingKey = this.verifierKey;
-    }
-
-    public String getVerifierKey() {
-        return verifierKey;
-    }
-
-    public void setVerifierKey(String verifierKey) {
-        this.verifierKey = verifierKey;
-    }
-
-    public String getSigningKey() {
-        return signingKey;
-    }
-
-    public void setSigningKey(String signingKey) {
-        this.signingKey = signingKey;
-    }
 
     public void setKeyPair(KeyPair keyPair) {
-        PrivateKey privateKey = keyPair.getPrivate();
-        Assert.state(privateKey instanceof RSAPrivateKey, "KeyPair must be an RSA ");
-        this.signer = new RsaSigner((RSAPrivateKey)privateKey);
-        RSAPublicKey publicKey = (RSAPublicKey)keyPair.getPublic();
-        this.verifier = new RsaVerifier(publicKey);
-        this.verifierKey = "-----BEGIN PUBLIC KEY-----\n" + new String(Base64.encode(publicKey.getEncoded())) + "\n-----END PUBLIC KEY-----";
+        this.keyPair=keyPair;
     }
 
     private boolean containsOpenId(OAuth2AccessToken oAuth2AccessToken){
@@ -159,20 +135,7 @@ public class OpenIdConnectTokenEnhancer implements TokenEnhancer {
     public OAuth2AccessToken enhance(OAuth2AccessToken oAuth2AccessToken, OAuth2Authentication oAuth2Authentication) {
         if(containsOpenId(oAuth2AccessToken)){
             DefaultOAuth2AccessToken enhanceAccessToken = new DefaultOAuth2AccessToken(oAuth2AccessToken);
-            Map<String, Object> idTokenMap = new LinkedHashMap<>(10);
-            idTokenMap.put(ISS,"https://www.example.com/openId-connect");
-            idTokenMap.put(SUB,oAuth2AccessToken.getValue());
-            idTokenMap.put(AUD,oAuth2Authentication.getOAuth2Request().getClientId());
-            idTokenMap.put(EXP,oAuth2AccessToken.getExpiration().getTime());
-            idTokenMap.put(IAT,System.currentTimeMillis());
-            if(oAuth2Authentication.getOAuth2Request().getRequestParameters().containsKey("max_age")){
-                idTokenMap.put(AUTH_TIME,System.currentTimeMillis());
-            }
-            String content = objectMapper.formatMap(idTokenMap);
-            String idToken = JwtHelper.encode(content, this.signer).getEncoded();
-            Map<String, Object> additionalInformation = new LinkedHashMap<>(enhanceAccessToken.getAdditionalInformation());
-            additionalInformation.put(ID_TOKEN,idToken);
-
+            Map<String, Object> additionalInformation = new LinkedHashMap<>( enhanceAccessToken.getAdditionalInformation());
             JWTClaimsSet.Builder alice = new JWTClaimsSet
                     .Builder()
                     .subject( oAuth2AccessToken.getValue() )
@@ -183,10 +146,16 @@ public class OpenIdConnectTokenEnhancer implements TokenEnhancer {
             if(oAuth2Authentication.getOAuth2Request().getRequestParameters().containsKey("max_age")){
                 alice.notBeforeTime( new Date(  ));
             }
+            JWSSigner jwsSigner = new RSASSASigner(keyPair.getPrivate());
             JWTClaimsSet claimsSet = alice.build();
             SignedJWT signedJWT = new SignedJWT( new JWSHeader.Builder( RS256 )
-                    .keyID( signer.algorithm())
+                    .keyID( null)
                     .build(), claimsSet );
+            try {
+                signedJWT.sign( jwsSigner);
+            } catch (JOSEException e) {
+                throw new RuntimeException( "sign error",e);
+            }
             additionalInformation.put(ID_TOKEN,signedJWT.serialize());
             enhanceAccessToken.setAdditionalInformation(additionalInformation);
             return enhanceAccessToken;

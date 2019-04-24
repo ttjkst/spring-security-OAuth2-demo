@@ -16,5 +16,12 @@ public class LoginController {
     public Object success(){
         return "login success"+ SecurityContextHolder.getContext().getAuthentication().getName();
     }
+
+
+    @ResponseBody
+    @RequestMapping(value = "/fail",method = RequestMethod.GET)
+    public Object fail(){
+        return "login fail "+ SecurityContextHolder.getContext().getAuthentication().getName();
+    }
 }
 

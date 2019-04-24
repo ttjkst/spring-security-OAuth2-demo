@@ -160,6 +160,7 @@ public class AuthorizationServerConfiguration extends AuthorizationServerConfigu
         public Map<String, Object> getKey(Principal principal) {
             RSAPublicKey publicKey = (RSAPublicKey) this.keyPair.getPublic();
             com.nimbusds.jose.jwk.RSAKey key = new RSAKey.Builder(publicKey).build();
+            logger.info( "send public key"+publicKey.toString());
             return new JWKSet(key).toJSONObject();
         }
     }
