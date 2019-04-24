@@ -1,5 +1,9 @@
 package org.github.ttjkst.openID.connect.token;
 
+import com.nimbusds.jose.JWSAlgorithm;
+import com.nimbusds.jose.JWSHeader;
+import com.nimbusds.jwt.JWTClaimsSet;
+import com.nimbusds.jwt.SignedJWT;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.crypto.codec.Base64;
 import org.springframework.security.jwt.JwtHelper;
@@ -19,12 +23,11 @@ import java.security.KeyPair;
 import java.security.PrivateKey;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
-import java.util.Collection;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
+
+import static com.nimbusds.jose.JWSAlgorithm.RS256;
 
 public class OpenIdConnectTokenEnhancer implements TokenEnhancer {
 
@@ -169,6 +172,22 @@ public class OpenIdConnectTokenEnhancer implements TokenEnhancer {
             String idToken = JwtHelper.encode(content, this.signer).getEncoded();
             Map<String, Object> additionalInformation = new LinkedHashMap<>(enhanceAccessToken.getAdditionalInformation());
             additionalInformation.put(ID_TOKEN,idToken);
+
+            JWTClaimsSet.Builder alice = new JWTClaimsSet
+                    .Builder()
+                    .subject( oAuth2AccessToken.getValue() )
+                    .issuer("https://www.example.com/openId-connect" )
+                    .expirationTime( oAuth2AccessToken.getExpiration() )
+                    .audience( oAuth2Authentication.getOAuth2Request().getClientId() )
+                    .issueTime( new Date(  ));
+            if(oAuth2Authentication.getOAuth2Request().getRequestParameters().containsKey("max_age")){
+                alice.notBeforeTime( new Date(  ));
+            }
+            JWTClaimsSet claimsSet = alice.build();
+            SignedJWT signedJWT = new SignedJWT( new JWSHeader.Builder( RS256 )
+                    .keyID( signer.algorithm())
+                    .build(), claimsSet );
+            additionalInformation.put(ID_TOKEN,signedJWT.serialize());
             enhanceAccessToken.setAdditionalInformation(additionalInformation);
             return enhanceAccessToken;
         }
