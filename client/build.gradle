@@ -14,22 +14,9 @@ buildscript {
 plugins {
 	id 'org.springframework.boot' version '2.1.2.RELEASE'
 	id("io.spring.dependency-management") version "1.0.6.RELEASE"
-	id 'java'
-	id 'idea'
 }
-
-group = 'org.security.example'
-version = '0.0.1-SNAPSHOT'
-sourceCompatibility = 1.8
-
-repositories {
-	mavenLocal()
-	mavenCentral()
-	maven{ url 'http://maven.aliyun.com/nexus/content/groups/public/'}
-}
-
-
 dependencies {
+	compile project(":core")
 	implementation('org.springframework.boot:spring-boot-starter-web')
 	compile group: 'org.springframework.security.oauth.boot', name: 'spring-security-oauth2-autoconfigure', version: '2.1.2.RELEASE'
 	compile group: 'org.springframework.session', name: 'spring-session-core', version: '2.1.2.RELEASE'
@@ -40,5 +27,4 @@ dependencies {
     compile group: 'org.apache.tomcat.embed', name: 'tomcat-embed-jasper', version: '8.5.32'
     compile group: 'org.apache.tomcat', name: 'tomcat-jsp-api', version: '8.5.32'
     compile group: 'ch.qos.logback', name: 'logback-classic', version: '1.2.3'
-	implementation('org.github.securityDemo:securityDemo-core:0.0.1')
 }

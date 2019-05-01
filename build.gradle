@@ -4,3 +4,26 @@
  * This is a general purpose Gradle build.
  * Learn how to create Gradle builds at https://guides.gradle.org/creating-new-gradle-builds/
  */
+subprojects {
+    buildscript{
+        ext{
+            springBootVersion='2.1.2.RELEASE'
+        }
+        repositories {
+            mavenCentral()
+        }
+        dependencies {
+            classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+        }
+    }
+    repositories {
+        mavenLocal()
+        mavenCentral()
+    }
+    apply plugin: 'java'
+    apply plugin: 'idea'
+    apply plugin: 'maven'
+    sourceCompatibility = 1.8
+    group = 'org.ttjkst.example.security'
+    version = '0.0.1-SNAPSHOT'
+}
