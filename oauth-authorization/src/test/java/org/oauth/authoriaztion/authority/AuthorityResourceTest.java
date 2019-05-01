@@ -11,9 +11,4 @@ import static org.junit.Assert.*;
 
 public class AuthorityResourceTest {
 
-    @Test
-    public void testInitAuthorityTest() throws IOException {
-        AuthorityResource authorityResource = new AuthorityResource();
-    }
-
 }

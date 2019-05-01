@@ -2,7 +2,8 @@ package org.oauth.authoriaztion.authority;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.oauth.authoriaztion.user.UserInfo;
+import org.github.securityDemo.core.authority.AuthorityEntity;
+import org.github.securityDemo.core.user.UserInfo;
 import org.springframework.security.access.AccessDecisionVoter;
 import org.springframework.security.access.ConfigAttribute;
 import org.springframework.security.core.Authentication;
@@ -13,7 +14,6 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Collection;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Set;
 
 public class UserInfoWebExpresssionAuthorityVoter implements AccessDecisionVoter<FilterInvocation> {

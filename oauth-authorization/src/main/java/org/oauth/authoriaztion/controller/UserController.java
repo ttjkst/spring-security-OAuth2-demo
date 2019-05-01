@@ -1,9 +1,8 @@
 package org.oauth.authoriaztion.controller;
 
-import org.oauth.authoriaztion.authority.AuthorityEntity;
-import org.oauth.authoriaztion.user.UserInfo;
+import org.github.securityDemo.core.authority.AuthorityEntity;
+import org.github.securityDemo.core.user.UserInfo;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;

@@ -2,8 +2,10 @@ package org.oauth.authoriaztion.user;
 
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.oauth.authoriaztion.authority.AuthorityAttr;
-import org.oauth.authoriaztion.authority.AuthorityEntity;
+import org.github.securityDemo.core.authority.AuthorityAttr;
+import org.github.securityDemo.core.authority.AuthorityEntity;
+import org.github.securityDemo.core.user.UserInfo;
+import org.github.securityDemo.core.user.UserInfoEnity;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -51,7 +53,7 @@ public class UserInfoDetailService implements UserDetailsService {
     }
 
     private UserInfo mapToUserInfo(UserInfoEnity enity){
-        Set<AuthorityEntity> entities = enity.getAuthorityEntities();
+        Set<org.github.securityDemo.core.authority.AuthorityEntity> entities = enity.getAuthorityEntities();
         Set<SimpleGrantedAuthority> simpleGrantedAuthorities = enity.getAuthorities()
                 .stream()
                 .map( SimpleGrantedAuthority::new )

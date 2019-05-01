@@ -4,6 +4,7 @@ plugins {
 }
 dependencies {
     compile project(":openID-connect-core-server-support")
+    compile project(":core")
     implementation('org.springframework.boot:spring-boot-starter-security')
     implementation('org.springframework.boot:spring-boot-starter-web')
     implementation('org.springframework.boot:spring-boot-starter-data-redis')
