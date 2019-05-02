@@ -2,6 +2,8 @@ package org.oauth.authoriaztion.user;
 
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.github.securityDemo.core.authority.AuthorityAttr;
 import org.github.securityDemo.core.authority.AuthorityEntity;
 import org.github.securityDemo.core.user.UserInfo;
@@ -15,7 +17,6 @@ import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.util.StringUtils;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -24,6 +25,8 @@ public class UserInfoDetailService implements UserDetailsService {
 
 
     private static List<UserInfo> userInfos;
+
+    private static Log logger = LogFactory.getLog(UserInfoDetailService.class);
 
     private String path ="userInfos.json";
 
@@ -49,7 +52,10 @@ public class UserInfoDetailService implements UserDetailsService {
         }
 
         Optional<UserInfo> first = userInfos.stream().filter( x -> x.getUsername().equals( username ) ).findFirst();
-        return first.orElseThrow( ()->new UsernameNotFoundException( String.format( " witch name %s can not found userInfo",username)));
+        return first.orElseThrow( ()->{
+            logger.info(String.format("current userInfoResource is "+userInfos));
+               return  new UsernameNotFoundException( String.format( " witch name %s can not found userInfo",username));
+        });
     }
 
     private UserInfo mapToUserInfo(UserInfoEnity enity){

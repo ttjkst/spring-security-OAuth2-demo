@@ -11,9 +11,11 @@
         "credentialsNonExpired": false,
         "enabled": true,
         "authorityEntities":[
-            {"path":"/.well-known/jwks.json","authority":"","any":true},
-            {"path":"/user/info","authority":"SCOPE_userInfo"},
-            {"path":"/*","authority":"ROLE_ANONYMOUS"}
+            {"path":"/.well-known/jwks.json","authority":"","any":true,
+                "caseSensitive": "false"
+            },
+            {"path":"/user/info","authority":"SCOPE_userInfo", "caseSensitive": "false"},
+            {"path":"/*","authority":"ROLE_ANONYMOUS", "caseSensitive": "false"}
         ]
     }
 ]
