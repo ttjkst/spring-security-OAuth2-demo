@@ -38,15 +38,15 @@ public class WebExpressionAutorityVoter implements AccessDecisionVoter<FilterInv
 
         List<String> authoritys   = extractAuthority(authentication);
         if(logger.isDebugEnabled()){
-            logger.info("extractAuthority:"+String.join(",",authoritys));
+            logger.debug("extractAuthority:"+String.join(",",authoritys));
         }
         List<String> needAuthAttr = extractAuthorityNeedAttrStr(attributes);
         if(logger.isDebugEnabled()){
-            logger.info("needAuthAttr:"+String.join(",",needAuthAttr));
+            logger.debug("needAuthAttr:"+String.join(",",needAuthAttr));
         }
         List<String> needAttrExpressions = extractAuthorityNeedAttrExpression(attributes);
         if(logger.isDebugEnabled()){
-            logger.info("needAttrExpressions:"+String.join(",",needAttrExpressions));
+            logger.debug("needAttrExpressions:"+String.join(",",needAttrExpressions));
         }
         int expressionAccess = ACCESS_ABSTAIN;
         for (String needAttrExpression : needAttrExpressions) {

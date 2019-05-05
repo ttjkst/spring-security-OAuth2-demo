@@ -59,9 +59,9 @@ public class OAuth2ClientConfig {
                 .authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE)
                 .redirectUriTemplate("{baseUrl}/login/oauth2/code/login_test")
                 .authorizationUri(userAuthorizationUri)
-                .userNameAttributeName("aa")
+                //.userNameAttributeName("aa")
                 .tokenUri(accessTokenUri)
-                .userInfoUri(userInfo)
+               // .userInfoUri(userInfo)
                 .jwkSetUri("http://127.0.0.1:9091/authorizan/.well-known/jwks.json")
                 .build();
         InMemoryClientRegistrationRepository inMemory = new InMemoryClientRegistrationRepository(clientRegistration);

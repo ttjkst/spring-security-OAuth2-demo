@@ -3,7 +3,11 @@ plugins {
     id("io.spring.dependency-management") version "1.0.6.RELEASE"
 }
 dependencies {
-    implementation('org.springframework.boot:spring-boot-starter-security')
-    implementation('org.springframework.security:spring-security-oauth2-core')
+    compileOnly('org.springframework.boot:spring-boot-starter-security')
+    compileOnly('org.springframework.security:spring-security-oauth2-core')
+    // https://mvnrepository.com/artifact/javax.servlet/javax.servlet-api
+    compileOnly('javax.servlet:javax.servlet-api:3.1.0')
+
+
 }
 jar.enabled=true
