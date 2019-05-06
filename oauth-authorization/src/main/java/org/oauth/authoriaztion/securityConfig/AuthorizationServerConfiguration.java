@@ -89,7 +89,7 @@ public class AuthorizationServerConfiguration extends AuthorizationServerConfigu
                     .resourceIds("asasas-1")
                     .authorizedGrantTypes("authorization_code")
                     .authorities("OAUTH2_CLIENT")
-                    .scopes("read","user","openid")
+                    .scopes("read","user","openid","profile")
                     .secret("login_secret")
                     ///至少要配置一个
                     .redirectUris("http://localhost:9093/client/oauth2/resource/get",

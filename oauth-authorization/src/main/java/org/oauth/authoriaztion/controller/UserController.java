@@ -4,10 +4,12 @@ import org.github.securityDemo.core.authority.AuthorityEntity;
 import org.github.securityDemo.core.user.UserInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -29,9 +31,9 @@ public class UserController {
     @ResponseBody
     //@PreAuthorize("hasAuthorty('SCOPE_userInfo')")
     public Object userInfo(){
-        String userAtt ="aa";
         Map<String,Object> map = new HashMap<>(1);
-        map.put(userAtt,SecurityContextHolder.getContext().getAuthentication());
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
         return map;
     }
 
@@ -70,5 +72,8 @@ public class UserController {
             requestStrMap.put(requestMatcher.getPattern(),entity);
         });
         return requestStrMap;
+    }
+    private Map<String,String> extracIdToken(Jwt jwt){
+        return  null;
     }
 }
