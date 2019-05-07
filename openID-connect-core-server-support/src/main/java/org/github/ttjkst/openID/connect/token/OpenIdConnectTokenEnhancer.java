@@ -128,6 +128,7 @@ public class OpenIdConnectTokenEnhancer implements TokenEnhancer {
                     .audience( oAuth2Authentication.getOAuth2Request().getClientId() )
                     .issueTime( new Date(  ));
             if(oAuth2Authentication.getOAuth2Request().getRequestParameters().containsKey("max_age")){
+                //todo:: need add time to redo compute
                 alice.notBeforeTime( new Date(  ));
             }
             JWSSigner jwsSigner = new RSASSASigner(keyPair.getPrivate());

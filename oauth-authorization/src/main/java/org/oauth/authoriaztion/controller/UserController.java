@@ -1,5 +1,6 @@
 package org.oauth.authoriaztion.controller;
 
+import com.nimbusds.jwt.SignedJWT;
 import org.github.securityDemo.core.authority.AuthorityEntity;
 import org.github.securityDemo.core.user.UserInfo;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,12 +11,14 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.oauth2.jwt.Jwt;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.text.ParseException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -33,7 +36,15 @@ public class UserController {
     public Object userInfo(){
         Map<String,Object> map = new HashMap<>(1);
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if(authentication instanceof JwtAuthenticationToken){
+            JwtAuthenticationToken jwtAuthenticationToken = (JwtAuthenticationToken) authentication;
+            Jwt token = jwtAuthenticationToken.getToken();
+            try {
+                String subject = extracIdToken(token);
+            } catch (ParseException e) {
 
+            }
+        }
         return map;
     }
 
@@ -73,7 +84,10 @@ public class UserController {
         });
         return requestStrMap;
     }
-    private Map<String,String> extracIdToken(Jwt jwt){
-        return  null;
+    private String  extracIdToken(Jwt jwt) throws ParseException {
+        String id_token = (String)jwt.getClaims().get("id_token");
+        SignedJWT parse = SignedJWT.parse(id_token);
+        String subject = parse.getJWTClaimsSet().getSubject();
+        return  subject;
     }
 }
