@@ -2,6 +2,7 @@ package org.github.ttjkst.openID.connect.store;
 
 
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
 
 /**
  * use for store openIdConnect Authentiaction
@@ -9,7 +10,7 @@ import org.springframework.security.core.Authentication;
  * */
 public interface OpenIdConnectStore {
 
-    Authentication loadAuthenticationBySubject(String subject);
+    UserDetails loadAuthenticationBySubject(String subject);
 
-    void saveAuthenicationbySubject(String subject,Authentication needSaveAuthentication);
+    void saveAuthenicationbySubject(String subject,UserDetails needSaveUserDetail);
 }

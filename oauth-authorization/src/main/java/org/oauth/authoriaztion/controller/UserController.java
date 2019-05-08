@@ -3,6 +3,8 @@ package org.oauth.authoriaztion.controller;
 import com.nimbusds.jwt.SignedJWT;
 import org.github.securityDemo.core.authority.AuthorityEntity;
 import org.github.securityDemo.core.user.UserInfo;
+import org.github.ttjkst.openID.connect.store.InMemoryOpenIdConnectStore;
+import org.github.ttjkst.openID.connect.store.OpenIdConnectStore;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
@@ -18,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.security.Principal;
 import java.text.ParseException;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -30,10 +33,12 @@ public class UserController {
     @Autowired
     private UserDetailsService userDetailsService;
 
+    private OpenIdConnectStore openIdConnectStore = new InMemoryOpenIdConnectStore();
+
     @RequestMapping(value = "/info",method = {RequestMethod.GET,RequestMethod.POST})
     @ResponseBody
     //@PreAuthorize("hasAuthorty('SCOPE_userInfo')")
-    public Object userInfo(){
+    public Object userInfo(Principal principal){
         Map<String,Object> map = new HashMap<>(1);
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if(authentication instanceof JwtAuthenticationToken){
@@ -41,6 +46,7 @@ public class UserController {
             Jwt token = jwtAuthenticationToken.getToken();
             try {
                 String subject = extracIdToken(token);
+                UserDetails userDetails = openIdConnectStore.loadAuthenticationBySubject(subject);
             } catch (ParseException e) {
 
             }

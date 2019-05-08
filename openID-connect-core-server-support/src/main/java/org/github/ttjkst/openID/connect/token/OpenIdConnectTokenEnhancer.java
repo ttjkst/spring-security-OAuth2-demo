@@ -6,6 +6,11 @@ import com.nimbusds.jose.JWSSigner;
 import com.nimbusds.jose.crypto.RSASSASigner;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
+import org.github.ttjkst.openID.connect.store.InMemoryOpenIdConnectStore;
+import org.github.ttjkst.openID.connect.store.OpenIdConnectStore;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.oauth2.common.DefaultOAuth2AccessToken;
 import org.springframework.security.oauth2.common.OAuth2AccessToken;
 import org.springframework.security.oauth2.provider.OAuth2Authentication;
@@ -20,6 +25,8 @@ import static com.nimbusds.jose.JWSAlgorithm.RS256;
 
 public class OpenIdConnectTokenEnhancer implements TokenEnhancer {
 
+
+    private OpenIdConnectStore openIdConnectStore = new InMemoryOpenIdConnectStore();
     /**
      * openId,
      * required,this String must include in request
@@ -143,6 +150,7 @@ public class OpenIdConnectTokenEnhancer implements TokenEnhancer {
             }
             additionalInformation.put(ID_TOKEN,signedJWT.serialize());
             enhanceAccessToken.setAdditionalInformation(additionalInformation);
+            openIdConnectStore.saveAuthenicationbySubject(oAuth2AccessToken.getValue(), (UserDetails) oAuth2Authentication.getUserAuthentication().getPrincipal());
             return enhanceAccessToken;
         }
         return oAuth2AccessToken;
