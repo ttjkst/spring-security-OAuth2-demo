@@ -12,19 +12,18 @@
         </encoder>
     </appender>
 
-    <!--输出到文件-->
-    <appender name="file" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>${log.path}</file>
-        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <fileNamePattern>logback.%d{yyyy-MM-dd}.log</fileNamePattern>
-        </rollingPolicy>
-        <encoder>
-            <pattern>%d{HH:mm:ss.SSS} %contextName [%thread] %-5level %logger{36} - %msg%n</pattern>
-        </encoder>
-    </appender>
+<!--    &lt;!&ndash;输出到文件&ndash;&gt;-->
+<!--    <appender name="file" class="ch.qos.logback.core.rolling.RollingFileAppender">-->
+<!--        <file>${log.path}</file>-->
+<!--        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">-->
+<!--            <fileNamePattern>logback.%d{yyyy-MM-dd}.log</fileNamePattern>-->
+<!--        </rollingPolicy>-->
+<!--        <encoder>-->
+<!--            <pattern>%d{HH:mm:ss.SSS} %contextName [%thread] %-5level %logger{36} - %msg%n</pattern>-->
+<!--        </encoder>-->
+<!--    </appender>-->
 
     <root level="info">
         <appender-ref ref="console" />
-        <appender-ref ref="file"></appender-ref>
     </root>
 </configuration>

@@ -1,8 +1,11 @@
 package org.oauth.authoriaztion.controller;
 
 import com.nimbusds.jwt.SignedJWT;
-import org.github.securityDemo.core.authority.AuthorityEntity;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.github.securityDemo.core.token.TokenStoreUseTokenEnhancer;
 import org.github.securityDemo.core.user.UserInfo;
+import org.github.securityDemo.core.user.UserInfoEnity;
 import org.github.ttjkst.openID.connect.store.InMemoryOpenIdConnectStore;
 import org.github.ttjkst.openID.connect.store.OpenIdConnectStore;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,7 +17,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
-import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -30,10 +32,16 @@ import java.util.stream.Collectors;
 public class UserController {
 
 
+    private final static Log logger  = LogFactory.getLog(UserController.class);
+
     @Autowired
     private UserDetailsService userDetailsService;
 
+    @Autowired
+    private TokenStoreUseTokenEnhancer tokenStoreUseTokenEnhancer;
+
     private OpenIdConnectStore openIdConnectStore = new InMemoryOpenIdConnectStore();
+
 
     @RequestMapping(value = "/info",method = {RequestMethod.GET,RequestMethod.POST})
     @ResponseBody
@@ -55,41 +63,37 @@ public class UserController {
     }
 
 
-    @RequestMapping(value="/user/detail",method =RequestMethod.GET)
+    @RequestMapping(value="/info/detail",method =RequestMethod.GET)
     @ResponseBody
     @PreAuthorize("hasAuthorty('SCOPE_userInfo')")
-    public Map<String,Object> queryUserInfoByName(String name){
-        UserDetails details = userDetailsService.loadUserByUsername(name);
-        if(details==null){
-            return null;
-        }
-        if(details instanceof UserInfo){
-            UserInfo userInfo = (UserInfo) details;
-            LinkedHashMap<AntPathRequestMatcher, AuthorityEntity> requestMap = userInfo.getBelongToRequestMap();
-            Map<String, Object> resultMap = extractOtherUserInfo(userInfo, requestMap);
-            return resultMap;
+    public UserInfoEnity queryUserInfoByName(){
+        Map<String,Object> map = new HashMap<>(1);
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if(authentication instanceof JwtAuthenticationToken){
+            JwtAuthenticationToken jwtAuthenticationToken = (JwtAuthenticationToken) authentication;
+            Jwt token = jwtAuthenticationToken.getToken();
+            try {
+                UserDetails userDetails = tokenStoreUseTokenEnhancer.getStoreAuthentication(token.getTokenValue());
+                return extractOtherUserInfo((UserInfo)userDetails);
+            } catch (Exception e) {
+                logger.error("get userInfo error",e);
+            }
         }
         throw  new UnsupportedOperationException("load detail is not org.oauth.authoriaztion.user.UserInfo.class");
     }
 
-    private Map<String, Object> extractOtherUserInfo(UserInfo userInfo, LinkedHashMap<AntPathRequestMatcher, AuthorityEntity> requestMap) {
+    private UserInfoEnity extractOtherUserInfo(UserInfo userInfo) {
         Collection<? extends GrantedAuthority> grantedAuthorities = userInfo.getAuthorities();
-        Map<String, AuthorityEntity> requestStrMap = extractRequestMapStrs(requestMap);
-        List<String> authorityStrs = grantedAuthorities.stream().map(x -> ((GrantedAuthority) x).getAuthority()).collect(Collectors.toList());
-
-        Map<String,Object> resultMap = new HashMap<>(2);
-        resultMap.put("authorityStrs",authorityStrs);
-        resultMap.put("urlPaths",requestStrMap);
-        return resultMap;
+        Set<String> authorityStrs = grantedAuthorities
+                .stream().map(x -> ((GrantedAuthority) x).getAuthority())
+                .collect(Collectors.toSet());
+        UserInfoEnity userInfoEnity = new UserInfoEnity();
+        userInfoEnity.setUsername(userInfo.getUsername());
+        userInfoEnity.setAuthorities(authorityStrs);
+        userInfoEnity.setAuthorityEntities(new HashSet<>(userInfo.getBelongToRequestMap().values()));
+        return userInfoEnity;
     }
 
-    private Map<String, AuthorityEntity> extractRequestMapStrs(LinkedHashMap<AntPathRequestMatcher, AuthorityEntity> requestMap) {
-        Map<String,AuthorityEntity>  requestStrMap = new HashMap<>(requestMap.size());
-        requestMap.forEach((requestMatcher,entity)->{
-            requestStrMap.put(requestMatcher.getPattern(),entity);
-        });
-        return requestStrMap;
-    }
     private String  extracIdToken(Jwt jwt) throws ParseException {
         String id_token = (String)jwt.getClaims().get("id_token");
         SignedJWT parse = SignedJWT.parse(id_token);

@@ -5,6 +5,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.web.util.UrlPathHelper;
 
+import java.util.Collection;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -17,7 +18,7 @@ public interface AuthorityUtils {
                 urlPathHelper);
     }
 
-    static Set<SimpleGrantedAuthority> packGrantedAuthoritys(Set<String> authoritys){
+    static Set<SimpleGrantedAuthority> packGrantedAuthoritys(Collection<String> authoritys){
        return authoritys.stream().map(SimpleGrantedAuthority::new).collect(Collectors.toSet());
     }
 }

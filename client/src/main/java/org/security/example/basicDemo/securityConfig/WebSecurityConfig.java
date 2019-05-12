@@ -8,8 +8,10 @@ import java.util.Map;
 import java.util.Set;
 
 
+import org.github.securityDemo.core.user.OAuth2ClientUserService;
 import org.github.securityDemo.core.user.UserInfoEnity;
 import org.github.securityDemo.core.utils.AuthorityUtils;
+import org.github.securityDemo.core.voters.FilterSecurityInterceptorObjectPostProcessor;
 import org.security.example.basicDemo.security.shortCode.ShortCodeAuthenicationFilter;
 import org.security.example.basicDemo.security.shortCode.ShortCodeAuthenticationProvider;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,6 +53,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 	@Autowired
 	private OAuth2AuthorizedClientService oAuth2AuthorizedClientService;
 
+
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
 		/**
@@ -66,7 +69,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 						.anyRequest()
 						.authenticated()
                 .and()
-					.authorizeRequests()
+					.authorizeRequests().withObjectPostProcessor(new FilterSecurityInterceptorObjectPostProcessor())
 					.antMatchers("oauth2/**")
 					.hasRole("ADMIN")
 				    .antMatchers("/OAuth/login/**","/OAuth/login/process/**","/login/end/fail")
@@ -78,7 +81,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 								.baseUri("/OAuth/login/process")
 						.and()
 							.userInfoEndpoint()
-								.oidcUserService(new OidcUserService())
+								.userService(new OAuth2ClientUserService())
 				        .and()
 							.defaultSuccessUrl("/login/end/success")
 				        .permitAll()

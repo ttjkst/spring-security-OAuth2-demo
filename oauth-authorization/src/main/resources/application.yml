@@ -1,0 +1,40 @@
+spring:
+  mvc:
+    view:
+      prefix: /templates/
+      suffix: .jsp
+    thymeleaf:
+      prefix: /templates/
+      suffix: .html
+  security:
+    oauth2:
+      client:
+        registration:
+          github:
+            client-id: 34d9f1ad39ff072e2625
+            client-secret: d53f6fb2d6fe9f30fc0dadd97d06da5835d0f35b
+server:
+  port: 9091
+  servlet:
+    context-path: /authorizan
+  session:
+    coolie:
+      name: SPRINGJSESSIONIDAUTHORIAZTION
+logging:
+  config: classpath:logback-spring.xml
+  level:
+    root: info
+    web: debug
+    org:
+      apache: error
+      springframework:
+        boot:
+          context:
+            logging:
+              ClasspathLoggingApplicationListener: error
+          autoconfigure:
+            logging:
+              ConditionEvaluationReportLoggingListener: info
+        web:
+          servlet: trace
+

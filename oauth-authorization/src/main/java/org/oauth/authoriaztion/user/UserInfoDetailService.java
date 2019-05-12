@@ -69,21 +69,4 @@ public class UserInfoDetailService implements UserDetailsService {
         return new UserInfo(enity.getUsername(),encodePassword,simpleGrantedAuthorities,entities);
     }
 
-    private LinkedList<AuthorityAttr> mapToAuthorityAttrs(Collection<AuthorityEntity> authorityEntities){
-        LinkedList<AuthorityAttr> linkedList= new LinkedList<AuthorityAttr>();
-        authorityEntities.forEach(entity->{
-            AntPathRequestMatcher antPath = new AntPathRequestMatcher(entity.getPath(),null,
-                    false,
-                    null);
-            AuthorityAttr attr;
-            if(entity.getAny()){
-                attr = new AuthorityAttr(premitAll, antPath, true);
-            }else {
-                attr = new AuthorityAttr(entity.getAuthority(), antPath, false);
-            }
-            linkedList.add(attr);
-        });
-        return linkedList;
-    }
-
 }

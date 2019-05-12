@@ -1,13 +1,14 @@
 spring.mvc.view.prefix=/WEB-INF/
 spring.mvc.view.suffix=.jsp
-server.servlet.context-path=/client
-server.port=9093
-userAuthorizationUri=http://127.0.0.1:9091/authorizan/oauth/authorize
-accessTokenUri=http://127.0.0.1:9091/authorizan/oauth/token
-## 获取用户详细信息的方法
-myuserInfo = http://127.0.0.1:9091/authorizan/user/info/detail
+server.servlet.context-path=/authorizan
+server.port=9091
 logging.config=classpath:logback-spring.xml
 logging.level.root=debug
+server.servlet.session.cookie.name=SPRINGJSESSIONIDAUTHORIAZTION
+#spring.datasource.url=jdbc:mysql://localhost/test
+#spring.datasource.username=dbuser
+#spring.datasource.password=dbpass
+#spring.datasource.driver-class-name=com.mysql.jdbc.Driver
 #logging.level.org.springframework.web.servlet.DispatcherServlet=trace
 #logging.level.org.springframework.web.servlet.resource.AbstractResourceResolver=trace
 #logging.level.org.springframework.web.servlet.resource.ResourceHttpRequestHandler=trace

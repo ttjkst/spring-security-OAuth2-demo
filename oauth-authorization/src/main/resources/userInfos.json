@@ -17,5 +17,24 @@
             {"path":"/user/info","authority":"SCOPE_userInfo", "caseSensitive": "false"},
             {"path":"/*","authority":"ROLE_ANONYMOUS", "caseSensitive": "false"}
         ]
+    },
+    {
+        "username": "tao",
+        "password": "admin",
+        "authorities": [
+            "ROLE_ADMIN",
+            "ROLE_USER"
+        ],
+        "accountNonExpired": false,
+        "accountNonLocked": false,
+        "credentialsNonExpired": false,
+        "enabled": true,
+        "authorityEntities":[
+            {"path":"/.well-known/jwks.json","authority":"","any":true,
+                "caseSensitive": "false"
+            },
+            {"path":"/user/info","authority":"SCOPE_userInfo", "caseSensitive": "false"},
+            {"path":"/*","authority":"ROLE_ANONYMOUS", "caseSensitive": "false"}
+        ]
     }
 ]

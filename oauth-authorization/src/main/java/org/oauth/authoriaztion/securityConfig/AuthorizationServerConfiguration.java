@@ -4,6 +4,7 @@ import com.nimbusds.jose.jwk.JWKSet;
 import com.nimbusds.jose.jwk.RSAKey;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.github.securityDemo.core.token.TokenStoreUseTokenEnhancer;
 import org.github.ttjkst.openID.connect.token.OpenIdConnectTokenEnhancer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -74,6 +75,10 @@ public class AuthorizationServerConfiguration extends AuthorizationServerConfigu
     @Autowired
     private JwtAccessTokenConverter accessTokenConverter;
 
+
+    @Autowired
+    private TokenStoreUseTokenEnhancer tokenStoreUseTokenEnhancer;
+
     @Override
     public void configure(ClientDetailsServiceConfigurer clients) throws Exception {
         clients.inMemory()
@@ -89,7 +94,7 @@ public class AuthorizationServerConfiguration extends AuthorizationServerConfigu
                     .resourceIds("asasas-1")
                     .authorizedGrantTypes("authorization_code")
                     .authorities("OAUTH2_CLIENT")
-                    .scopes("read","user","openid","profile")
+                    .scopes("read","user")
                     .secret("login_secret")
                     ///至少要配置一个
                     .redirectUris("http://localhost:9093/client/oauth2/resource/get",
@@ -105,7 +110,7 @@ public class AuthorizationServerConfiguration extends AuthorizationServerConfigu
                 .userApprovalHandler(userApprovalHandler)
                 .accessTokenConverter(accessTokenConverter);
         TokenEnhancerChain tokenEnhancerChain = new TokenEnhancerChain();
-        tokenEnhancerChain.setTokenEnhancers(Arrays.asList(tokenEnhancer,accessTokenConverter));
+        tokenEnhancerChain.setTokenEnhancers(Arrays.asList(tokenEnhancer,accessTokenConverter,tokenStoreUseTokenEnhancer));
         endpoints.tokenEnhancer(tokenEnhancerChain);
 
     }

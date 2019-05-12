@@ -2,6 +2,7 @@ package org.oauth.authoriaztion.beanConfig;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.github.securityDemo.core.token.TokenStoreUseTokenEnhancer;
 import org.oauth.authoriaztion.keyPair.KeyPairUtils;
 import org.oauth.authoriaztion.user.UserInfoDetailService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,6 +45,12 @@ public class BeansConfig {
 
     @Autowired
     private KeyPair keyPair;
+
+
+    @Bean
+    public TokenStoreUseTokenEnhancer tokenStoreUseTokenEnhancer(){
+        return new TokenStoreUseTokenEnhancer();
+    }
 
     @Bean
     public PasswordEncoder passwordEncoderDefinded(){

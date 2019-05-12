@@ -26,7 +26,7 @@ public class UserInfo implements UserDetails {
 
     public UserInfo(String username, String password, Set<? extends GrantedAuthority> authorities,
                     boolean accountNonExpired, boolean accountNonLocked,
-                    boolean credentialsNonExpired, boolean enabled, Set<AuthorityEntity> authorityInfos) {
+                    boolean credentialsNonExpired, boolean enabled, Collection<AuthorityEntity> authorityInfos) {
 
         if (((username == null) || "".equals(username)) || (password == null)) {
             throw new IllegalArgumentException(
@@ -63,6 +63,13 @@ public class UserInfo implements UserDetails {
 
         this(username,password,authorities,true,true,
                 true,true, authorityInfos);
+    }
+
+
+    public UserInfo(UserInfo userInfo) {
+
+        this(userInfo.getUsername(),"N/A",userInfo.authorities,userInfo.isAccountNonExpired(),userInfo.isAccountNonLocked(),
+                userInfo.isCredentialsNonExpired(),userInfo.isEnabled(), userInfo.getBelongToRequestMap().values());
     }
 
     @Override
